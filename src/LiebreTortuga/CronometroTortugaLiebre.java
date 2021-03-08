@@ -13,7 +13,7 @@ public class CronometroTortugaLiebre extends JLabel implements Runnable{
     }
 
     @Override
-    public void run() {
+    public synchronized void run() {
         try {
             while(bandera_llegada){
                 this.setText(Tiempo());

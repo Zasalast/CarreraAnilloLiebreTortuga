@@ -206,19 +206,9 @@ public class ListaLabel extends JPanel implements  Runnable {
         }
     }
     public void paint(Graphics g) {
-        ;
-        super.paint(g);
-        if ( getX_tortuga()!= getX_liebre()) {
-            actualizarNodos();
-            g.drawImage(fondo.getImage(), 0, 0, getWidth(), getHeight(), this);
-            setOpaque(false);
 
-//            Graphics2D g2d = (Graphics2D) g;
-//            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-//                    RenderingHints.VALUE_ANTIALIAS_ON);
-//        ball.paint(g2d);
-//            racquet.paint(g2d);
-        }
+        super.paint(g);
+
 
     }
     void actualizarNodos(){
@@ -229,22 +219,31 @@ public class ListaLabel extends JPanel implements  Runnable {
 
     }
     @Override
-    public void run() {
+    public synchronized void run() {
         int i = 0;
         while (bandera_llegada) {
-            if (i < 100000) {
+            this.repaint();
+
                 i++;
+
                 System.out.println(i);
-listar();
+
+
+                if ( getX_tortuga()== getX_liebre()) {
+                    bandera_llegada=false;
+
+                }else{
+                    actualizarNodos();
+                    listar();
+                    System.out.println("actualizando listalabel");
+                }
 
                 try {
-                    Thread.sleep(6 * getVelocidad());
+                    Thread.sleep(60 * getVelocidad());
                 } catch (InterruptedException e3) {
                     e3.printStackTrace();
                 }
-            } else {
-                bandera_llegada = false;
-            }
+
             setVisible(true);
         }
     }

@@ -9,14 +9,14 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-import java.util.TimerTask;
 import javax.swing.ImageIcon;
 import static java.awt.Color.green;
 
 public class VentanaPrincipalLiebreTortuga extends JFrame implements ActionListener , WindowListener,
-        ChangeListener {
+        ChangeListener,Runnable {
     ListaLabel rc;
     Thread hilorc;
+    Thread principal_hilo;
     private boolean bandera=true;
     PanelCanvasTortugaLiebre jp_numeros,jp_Informe;
     PanelControlTortugaLiebre jp_Panel_controles,jp_Panel_controles_btns,jp_Panel_controles_silder;
@@ -25,8 +25,8 @@ public class VentanaPrincipalLiebreTortuga extends JFrame implements ActionListe
     private CronometroTortugaLiebre cronos;
     JButton btn_inicio,btn_pausar,btn_reanudar, btn_terminar,btn_salir;
 
-    TimerTask timerTask ;
-
+    Timer timerTa ;
+    java.util.Timer timer;
 
 
 
@@ -34,7 +34,7 @@ public class VentanaPrincipalLiebreTortuga extends JFrame implements ActionListe
 
     private Thread   cronoshilo,relohilo;
     int delay;
-    Timer timer;
+
     boolean parar_carrera = false;
     JSlider silder1;
 
@@ -69,14 +69,18 @@ public class VentanaPrincipalLiebreTortuga extends JFrame implements ActionListe
         JTextAreaComponents();
       rc=new ListaLabel(capacidad_anillo,jp_numeros.getHeight()-150,jp_numeros.getWidth()-400,posicion_liebre,posicion_tortuga);
       hilorc=new Thread(rc);
+      principal_hilo =new Thread(this);
         jp_principal = new PanelContenedorTortugaLiebre();
         PanelBorderLAyout();
 
         delay = 1000;
-        timer = new Timer(delay, this);
-        timer.setInitialDelay(delay * 7); //We pause animation twice per cycle
-        //by restarting the timer
-        timer.setCoalesce(true);
+      timerTa = new Timer(delay, this);
+      timerTa.setInitialDelay(delay * 7); //We pause animation twice per cycle
+
+      timerTa.setCoalesce(true);
+      timer = new java.util.Timer();
+
+     // timer.scheduleAtFixedRate(iniciar(), 0, 1000);
         this.setVisible(Visible_ventana);
     }
 
@@ -85,24 +89,17 @@ public class VentanaPrincipalLiebreTortuga extends JFrame implements ActionListe
     }
 
 void terminarCarrera(){
-    timer.stop();
+    timerTa.stop();
     parar_carrera= true;
     relohilo.stop();
     cronoshilo.stop();
+    principal_hilo.stop();
 }
 
     void iniciar(){
       //  jp_numeros.add(rc,BorderLayout.CENTER);
         hilorc.start();
-     //   hilorc.start();
-        javax.swing.SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                timer.start();
-                parar_carrera = false;
-                rc.listar();
-
-            }
-        });
+        principal_hilo.start();
         relohilo.start();
         cronoshilo.start();
     }
@@ -232,13 +229,13 @@ void JLabelComponents(){
             btn_terminar.setEnabled(true);
         }else if (e.getSource() == btn_reanudar) {
 
-            btn_pausar.setEnabled(false);
-            btn_reanudar.setEnabled(true);
+            btn_pausar.setEnabled(true);
+            btn_reanudar.setEnabled(false);
             btn_terminar.setEnabled(true);
         }else if (e.getSource() == btn_terminar) {
             btn_pausar.setEnabled(false);
-            btn_reanudar.setEnabled(true);
-            btn_terminar.setEnabled(true);
+            btn_reanudar.setEnabled(false);
+            btn_terminar.setEnabled(false);
         }
 
         if (e.getSource() == btn_salir) {
@@ -312,4 +309,31 @@ void JLabelComponents(){
     public void setVelocidad_ejecucion1(int velocidad_ejecucion1) {
         this.velocidad_ejecucion1 = velocidad_ejecucion1;
     }
+
+    @Override
+    public void run() { int f=0;
+        System.out.println("arranco hilo principal");
+        while (bandera_llegada) {
+            try {
+                Thread.sleep(1);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            parar_carrera = false;
+
+            System.out.println("actualizando ventana");
+if (f!=rc.getX_tortuga()){
+    rc.listar();
+    informe_JTextArea.setText(informe_JTextArea.getText() + "\n" +
+            "Posiciòn Tortuga" +
+            rc.getX_tortuga() + "\n Posiciòn Liebre" +
+            rc.getX_liebre()
+    );
+} f=rc.getX_tortuga();
+
+            rc.setVisible(true);
+        }
+        System.out.println("termina hilo principal");
+    }
+
 }

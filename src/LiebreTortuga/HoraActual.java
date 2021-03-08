@@ -49,7 +49,7 @@ public class HoraActual extends JLabel implements Runnable{
     }
 
     @Override
-    public void run() {
+    public synchronized void run() {
         while (bandera_llegada){
             this.setText("" + formateadr4.format(new Date()));
             System.out.println("hora actual");
