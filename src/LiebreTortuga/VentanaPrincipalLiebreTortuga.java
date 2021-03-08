@@ -36,7 +36,7 @@ public class VentanaPrincipalLiebreTortuga extends JFrame implements ActionListe
     int delay;
     Timer timer;
     boolean parar_carrera = false;
-    JSlider silder1, silder2;
+    JSlider silder1;
 
     //Set up animation parameters.
     static final int FPS_MIN = 100;
@@ -67,7 +67,7 @@ public class VentanaPrincipalLiebreTortuga extends JFrame implements ActionListe
         components();
         JLabelComponents();
         JTextAreaComponents();
-      rc=new ListaLabel(18,300,300,posicion_liebre,posicion_tortuga);
+      rc=new ListaLabel(capacidad_anillo,jp_numeros.getHeight()-150,jp_numeros.getWidth()-400,posicion_liebre,posicion_tortuga);
       hilorc=new Thread(rc);
         jp_principal = new PanelContenedorTortugaLiebre();
         PanelBorderLAyout();
@@ -92,7 +92,7 @@ void terminarCarrera(){
 }
 
     void iniciar(){
-        jp_numeros.add(rc,BorderLayout.CENTER);
+      //  jp_numeros.add(rc,BorderLayout.CENTER);
         hilorc.start();
      //   hilorc.start();
         javax.swing.SwingUtilities.invokeLater(new Runnable() {
@@ -212,7 +212,7 @@ void JLabelComponents(){
         jp_Informe.AddComponentes(cronos);
         jp_Informe.AddComponentes(fech);
        // jp_Informe.AddComponentes(pane);
-      //  jp_principal.add(rc,BorderLayout.CENTER);
+        jp_principal.add(rc,BorderLayout.CENTER);
         //jp_numeros.AddComponentes(capacidad_anillo);
         this.add(jp_principal);
     }
@@ -232,11 +232,17 @@ void JLabelComponents(){
             btn_terminar.setEnabled(true);
         }else if (e.getSource() == btn_reanudar) {
 
+            btn_pausar.setEnabled(false);
+            btn_reanudar.setEnabled(true);
+            btn_terminar.setEnabled(true);
         }else if (e.getSource() == btn_terminar) {
-
+            btn_pausar.setEnabled(false);
+            btn_reanudar.setEnabled(true);
+            btn_terminar.setEnabled(true);
         }
 
         if (e.getSource() == btn_salir) {
+            System.exit(1);
         }
     }
 
@@ -280,21 +286,14 @@ void JLabelComponents(){
         if (e.getSource() == silder1) {
 
             silder1 = (JSlider)e.getSource();
-            // if (!silder1.getValueIsAdjusting()) {
+
             int fps = (int)silder1.getValue();
             setVelocidad_ejecucion(fps);
-
-            // }
-        }
-
-        if (e.getSource() == silder2) {
-            silder2 = (JSlider)e.getSource();
-
-            int fps = (int)silder2.getValue();
-            setVelocidad_ejecucion1(fps);
-
+            rc.setVelocidad(fps);
 
         }
+
+
 
     }
 
