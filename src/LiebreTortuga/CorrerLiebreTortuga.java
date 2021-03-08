@@ -9,5 +9,6 @@ public class CorrerLiebreTortuga {
 //        System.out.println((int) (Math.random()*20));
 //        System.out.println(randomGenerator.nextInt(20 - 5 + 1) + 5);
 //        System.out.println(randomGenerator.nextInt(20) + 1);
+
     }
 }

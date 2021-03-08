@@ -20,10 +20,12 @@ public class PanelContenedorTortugaLiebre extends JPanel{
         this.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
     }
 
-    public void addJPanel(JPanel panel, String borderLayouts){
+    public void addJPanel(Component panel, String borderLayouts){
         this.add(panel,borderLayouts);
     }
-
+    //    public void addJPanel(JPanel panel, String borderLayouts){
+//        this.add(panel,borderLayouts);
+//    }
     public void addJComponents(Component components){
         this.add(components);
     }

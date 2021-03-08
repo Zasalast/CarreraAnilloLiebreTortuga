@@ -17,6 +17,7 @@ public class VentanaSeleccionarTortugaLiebre extends JFrame implements ActionLis
     JTextField capacidad_anillo,posicion_liebre,posicion_tortuga;
     TimerTask timerTask ;
     private boolean bandera=true;
+
     public VentanaSeleccionarTortugaLiebre(String title, int ancho, int alto, boolean bloqueo_ventana, boolean Visible_ventana) throws HeadlessException {
         super(title);
         setLayout(new BorderLayout(1, 1));
@@ -130,7 +131,7 @@ void iniciar_carrera(){
 }
 
 void incioSinControl(){
-    VentanaPrincipalLiebreTortuga v1 = new VentanaPrincipalLiebreTortuga("Carrera Liebre vs Tortuga Seleccionar Etapas", 900, 650, false, true,(((int) (Math.random()*20))),(int) (Math.random()*20),(int) (Math.random()*20));
+    VentanaPrincipalLiebreTortuga v1 = new VentanaPrincipalLiebreTortuga("Carrera Liebre vs Tortuga Seleccionar Etapas", 900, 650, false, true,(((int) (Math.random()*20))),((int) (Math.random()*5)),((int) (Math.random()*5)));
     this.setVisible(false);
 }
 
