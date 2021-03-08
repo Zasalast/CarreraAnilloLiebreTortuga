@@ -90,6 +90,7 @@ public class VentanaPrincipalLiebreTortuga extends JFrame implements ActionListe
 
 void terminarCarrera(){
     timerTa.stop();
+    hilorc.stop();
     parar_carrera= true;
     relohilo.stop();
     cronoshilo.stop();
@@ -227,15 +228,22 @@ void JLabelComponents(){
             btn_pausar.setEnabled(false);
             btn_reanudar.setEnabled(true);
             btn_terminar.setEnabled(true);
+            hilorc.suspend();
+            relohilo.suspend();
+            cronoshilo.suspend();
         }else if (e.getSource() == btn_reanudar) {
 
             btn_pausar.setEnabled(true);
             btn_reanudar.setEnabled(false);
             btn_terminar.setEnabled(true);
+            hilorc.resume();
+            relohilo.resume();
+            cronoshilo.resume();
         }else if (e.getSource() == btn_terminar) {
             btn_pausar.setEnabled(false);
             btn_reanudar.setEnabled(false);
             btn_terminar.setEnabled(false);
+        terminarCarrera();
         }
 
         if (e.getSource() == btn_salir) {
@@ -311,29 +319,35 @@ void JLabelComponents(){
     }
 
     @Override
-    public void run() { int f=0;
+    public  void run() {
         System.out.println("arranco hilo principal");
         while (bandera_llegada) {
-            try {
-                Thread.sleep(1);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            parar_carrera = false;
 
-            System.out.println("actualizando ventana");
-if (f!=rc.getX_tortuga()){
-    rc.listar();
-    informe_JTextArea.setText(informe_JTextArea.getText() + "\n" +
-            "Posiciòn Tortuga" +
-            rc.getX_tortuga() + "\n Posiciòn Liebre" +
-            rc.getX_liebre()
-    );
-} f=rc.getX_tortuga();
 
-            rc.setVisible(true);
+            rc.listar();
+            this.setVisible(true);
+            System.out.println("Actualizando hilo principal thor"+rc.getX_tortuga()+" Libre "+rc.getX_liebre());    if ( rc.getX_tortuga()== rc.getX_liebre()) {
+                bandera_llegada=false;
+       terminarCarrera();
+       rc.listar();
+       this.setVisible(true);
+            }else{
+
+                informe_JTextArea.setText(informe_JTextArea.getText() + "\n" +
+                        "Posiciòn Tortuga" +
+                        rc.getX_tortuga() + "\n Posiciòn Liebre" +
+                        rc.getX_liebre()
+                );
+                rc.listar();
+this.setVisible(true);
+                System.out.println("actualizando listalabel");
+            } rc.listar();
+            this.setVisible(true);
+
+
+
         }
-        System.out.println("termina hilo principal");
+        System.out.println("termina hilo principal thor"+rc.getX_tortuga()+" Libre "+rc.getX_liebre());
     }
 
 }

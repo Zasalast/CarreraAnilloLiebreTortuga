@@ -3,7 +3,7 @@ package LiebreTortuga;
 import javax.swing.*;
 import java.awt.*;
 
-public class ListaLabel extends JPanel implements  Runnable {
+public  class ListaLabel extends JPanel implements  Runnable {
     private Nodo inicio;
     private Nodo ultimo;
     private int x_liebre,x_tortuga;//una bandera de ubicacion de liebre y turtuga
@@ -206,45 +206,60 @@ public class ListaLabel extends JPanel implements  Runnable {
         }
     }
     public void paint(Graphics g) {
-
+        listar();
         super.paint(g);
-
+        listar();
 
     }
-    void actualizarNodos(){
+     void actualizarNodos(){
+        if (getX_tortuga()>=getTamanio()){
+            setX_tortuga(0);
+            setX_tortuga(getX_tortuga()+1);
+        }
+         if (getX_liebre()>=getTamanio()){
+             setX_liebre(0);
+             setX_liebre(getX_liebre()+2);
+         }
+        listar();
         setX_tortuga(getX_tortuga()+1);
         setX_liebre(getX_liebre()+2);
         editarPorPosicion(getX_liebre(),url_liebre,"Liebre");
         editarPorPosicion(getX_tortuga(),url_tortuga,"Tortuga");
-
+         listar();
     }
     @Override
-    public synchronized void run() {
-        int i = 0;
+    public  void run() {
+
         while (bandera_llegada) {
+            listar(); setVisible(true);
             this.repaint();
 
-                i++;
 
-                System.out.println(i);
+            System.out.println("Tortuga"+getX_tortuga());
 
-
-                if ( getX_tortuga()== getX_liebre()) {
-                    bandera_llegada=false;
-
-                }else{
-                    actualizarNodos();
-                    listar();
-                    System.out.println("actualizando listalabel");
+            System.out.println("Liebre"+getX_liebre());
+            repaint();
+            actualizarNodos(); listar(); setVisible(true);
+            this.repaint();
+            if ( getX_tortuga()== getX_liebre()) {
+                try {
+                    Thread.sleep(1);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
+                bandera_llegada=false;
+
+            }
+            listar(); setVisible(true);
+            this.repaint();
 
                 try {
-                    Thread.sleep(60 * getVelocidad());
+                    Thread.sleep(6 * getVelocidad());
                 } catch (InterruptedException e3) {
                     e3.printStackTrace();
                 }
-
-            setVisible(true);
+            listar(); setVisible(true);
+            this.repaint();
         }
     }
 
