@@ -1,6 +1,7 @@
 package LiebreTortuga;
-import java.awt.Image;
+
 import javax.swing.*;
+import java.awt.*;
 
 public class EscalarImagenLabel {
     public Icon PonerLaImagen(String direccion, JLabel label) {

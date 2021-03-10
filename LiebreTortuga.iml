@@ -10,7 +10,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$USER_HOME$/Descargas/jcalendar-1.4.jar!/" />
+          <root url="jar://$USER_HOME$/Documents/NetBeansProjects/jcalendar-1.4.jar/jcalendar-1.4.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />

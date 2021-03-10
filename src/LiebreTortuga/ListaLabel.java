@@ -1,7 +1,10 @@
 package LiebreTortuga;
 
 import javax.swing.*;
-import java.awt.*;
+//import java.awt.*;
+import java.awt.Graphics;
+
+import static java.lang.Thread.sleep;
 
 public  class ListaLabel extends JPanel implements  Runnable {
     private Nodo inicio;
@@ -13,21 +16,19 @@ public  class ListaLabel extends JPanel implements  Runnable {
     boolean bandera_llegada = true;
     ImageIcon fondo;
     private EscalarImagenLabel Esc_imagen_label=new EscalarImagenLabel();
+    Thread hilorc= new Thread(this);
+    VentanaPrincipalLiebreTortuga vpl;
+    public ListaLabel(int alto,int ancho) {
 
-    public ListaLabel(int x,int alto,int ancho,int posicion_liebre,int posicion_tortuga) {
         this.setSize(ancho-200,alto-200);
-        setX_liebre(posicion_liebre);
-        setX_tortuga(posicion_tortuga);
-        for (int i = 0; i <x ; i++) {
-            addInicio("Piedra","Piedra");
-        }
-        fondo = new ImageIcon(getClass().getResource("/images/liebretortuga/"+"T1"+".png"));
+
+        fondo = new ImageIcon(getClass().getResource("/images/liebretortuga/"+"T2"+".gif"));
 
         // addInicio("Liebre","Liebre");
         //  addInicio("Tortuga","Tortuga");
-        addUbicacion(posicion_liebre,url_liebre,"Liebre");
-        addUbicacion(posicion_tortuga,url_tortuga,"Tortuga");
+
         this.setVisible(true);
+
     }
     public boolean esVacia(){
         return inicio == null;
@@ -200,66 +201,89 @@ public  class ListaLabel extends JPanel implements  Runnable {
             int i = 0;
             do{
                 aux = aux.getSiguiente();
-                this.add(aux);
+                add(aux);
+                repaint();
+                this.setVisible(true);
+                i++;
+            }while(aux != inicio);
+        }
+    }Graphics g;
+    public void paint(Graphics g) {
+        g.drawImage(fondo.getImage(),0, 0,    this.getWidth(), this.getHeight(), this);
+        super.paint(g);
+       listar(g);
+               g.fillOval(5*getX_liebre(),5*getX_tortuga(),20,20);
+    }
+
+    private void listar(Graphics g) {
+        if (!esVacia()) {
+            Nodo aux = inicio;
+            ImageIcon    fondo1=new ImageIcon(getClass().getResource("/images/liebretortuga/"+aux.getUrl_imagen2()+".png"));
+
+            int i = 0;
+            do{
+                aux = aux.getSiguiente();
+            //    fondo=aux
+                g.drawImage(fondo.getImage(), aux.getWidth(),aux.getHeight(),100,100, this);
+                repaint();
                 i++;
             }while(aux != inicio);
         }
     }
-    public void paint(Graphics g) {
-        listar();
-        super.paint(g);
-        listar();
 
-    }
-     void actualizarNodos(){
+    void actualizarNodos(){
+         listar();repaint();
         if (getX_tortuga()>=getTamanio()){
             setX_tortuga(0);
             setX_tortuga(getX_tortuga()+1);
+            listar(); this.setVisible(true);
+            repaint();
         }
          if (getX_liebre()>=getTamanio()){
              setX_liebre(0);
              setX_liebre(getX_liebre()+2);
+             listar(); repaint();
+             this.setVisible(true);
          }
-        listar();
+
         setX_tortuga(getX_tortuga()+1);
         setX_liebre(getX_liebre()+2);
         editarPorPosicion(getX_liebre(),url_liebre,"Liebre");
         editarPorPosicion(getX_tortuga(),url_tortuga,"Tortuga");
-         listar();
+          listar();repaint();
+         System.out.println(" Tortuga: "+getX_tortuga());
+         System.out.println(" Liebre: "+getX_liebre());
+
     }
+
     @Override
     public  void run() {
 
-        while (bandera_llegada) {
-            listar(); setVisible(true);
-            this.repaint();
-
-
-            System.out.println("Tortuga"+getX_tortuga());
-
-            System.out.println("Liebre"+getX_liebre());
-            repaint();
-            actualizarNodos(); listar(); setVisible(true);
-            this.repaint();
+        while (isBandera_llegada()) {
             if ( getX_tortuga()== getX_liebre()) {
                 try {
-                    Thread.sleep(1);
+                    sleep(6 * getVelocidad());
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }  this.repaint();
+
+                actualizarNodos();
+                listar(); setVisible(true);
+                this.repaint();
+                setBandera_llegada(false);
+                hilorc.stop();
+            }else{
+                try {
+                    sleep(6 * getVelocidad());
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                bandera_llegada=false;
+                this.repaint();
 
+                actualizarNodos();
+                listar(); setVisible(true);
+                this.repaint();
             }
-            listar(); setVisible(true);
-            this.repaint();
-
-                try {
-                    Thread.sleep(6 * getVelocidad());
-                } catch (InterruptedException e3) {
-                    e3.printStackTrace();
-                }
-            listar(); setVisible(true);
-            this.repaint();
         }
     }
 
@@ -269,5 +293,22 @@ public  class ListaLabel extends JPanel implements  Runnable {
 
     public void setBandera_llegada(boolean bandera_llegada) {
         this.bandera_llegada = bandera_llegada;
+    }
+
+    public void initialComponents(int inicial_maximo,int posicion_liebre,int posicion_tortuga) {
+        setX_liebre(posicion_liebre);
+        setX_tortuga(posicion_tortuga);
+        for (int i = 0; i <inicial_maximo ; i++) {
+            addInicio("Piedra","Piedra");
+
+            listar(); setVisible(true);
+            this.repaint();
+        }
+        addUbicacion(posicion_liebre,url_liebre,"Liebre");
+        addUbicacion(posicion_tortuga,url_tortuga,"Tortuga");
+        actualizarNodos();
+        listar(); setVisible(true);
+        this.repaint();
+        hilorc.start();
     }
 }

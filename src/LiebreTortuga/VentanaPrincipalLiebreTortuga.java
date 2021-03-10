@@ -9,46 +9,38 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-import javax.swing.ImageIcon;
+
 import static java.awt.Color.green;
 
-public class VentanaPrincipalLiebreTortuga extends JFrame implements ActionListener , WindowListener,
-        ChangeListener,Runnable {
-    ListaLabel rc;
-    Thread hilorc;
-    Thread principal_hilo;
+public class VentanaPrincipalLiebreTortuga extends JFrame implements ActionListener,Runnable , WindowListener,
+        ChangeListener
+{private Thread V_principal;
+    private ListaLabel rc;
     private boolean bandera=true;
-    PanelCanvasTortugaLiebre jp_numeros,jp_Informe;
-    PanelControlTortugaLiebre jp_Panel_controles,jp_Panel_controles_btns,jp_Panel_controles_silder;
-    PanelContenedorTortugaLiebre jp_principal;
+    private PanelCanvasTortugaLiebre jp_numeros,jp_Informe;
+    private PanelControlTortugaLiebre jp_Panel_controles,jp_Panel_controles_btns,jp_Panel_controles_silder;
+    private PanelContenedorTortugaLiebre jp_principal;
     private HoraActual fech;
     private CronometroTortugaLiebre cronos;
-    JButton btn_inicio,btn_pausar,btn_reanudar, btn_terminar,btn_salir;
+    private JButton btn_inicio,btn_pausar,btn_reanudar, btn_terminar,btn_salir;
+    private JLabel chronos;
+   private Thread   cronoshilo,relohilo;
 
-    Timer timerTa ;
-    java.util.Timer timer;
+    private JSlider silder1;
+    private static final int FPS_MIN = 100;
+    private static final int FPS_MAX = 400;
+    private static final int FPS_INIT = 100;
 
+    private static  int inicial_tortuga ;
+    private static  int inicial_maximo;
+    private static  int inicial_liebre;
 
-
-
-
-    private Thread   cronoshilo,relohilo;
-    int delay;
-
-    boolean parar_carrera = false;
-    JSlider silder1;
-
-    //Set up animation parameters.
-    static final int FPS_MIN = 100;
-    static final int FPS_MAX = 400;
-    static final int FPS_INIT = 100;
-
-    boolean bandera_llegada = true;
-    int velocidad_ejecucion,velocidad_ejecucion1;
+    private boolean bandera_llegada = true;
+    private int velocidad_ejecucion ;
 
 
-    private JTextArea informe_carrera_JTextArea, informe_JTextArea;
-    private JScrollPane pane, pane_estudiante;
+     JTextArea   informe_JTextArea;
+    private JScrollPane pane ;
 
   public VentanaPrincipalLiebreTortuga(String title, int ancho, int alto, boolean bloqueo_ventana, boolean Visible_ventana,int capacidad_anillo,int  posicion_liebre,int posicion_tortuga) throws HeadlessException {
         super(title);
@@ -67,42 +59,38 @@ public class VentanaPrincipalLiebreTortuga extends JFrame implements ActionListe
         components();
         JLabelComponents();
         JTextAreaComponents();
-      rc=new ListaLabel(capacidad_anillo,jp_numeros.getHeight()-150,jp_numeros.getWidth()-400,posicion_liebre,posicion_tortuga);
-      hilorc=new Thread(rc);
-      principal_hilo =new Thread(this);
+      this.inicial_tortuga=posicion_tortuga;
+              this.inicial_maximo=capacidad_anillo;
+      this.inicial_liebre=posicion_liebre;
+      rc=new ListaLabel(jp_numeros.getHeight()-150,jp_numeros.getWidth()-400);
         jp_principal = new PanelContenedorTortugaLiebre();
         PanelBorderLAyout();
-
-        delay = 1000;
-      timerTa = new Timer(delay, this);
-      timerTa.setInitialDelay(delay * 7); //We pause animation twice per cycle
-
-      timerTa.setCoalesce(true);
-      timer = new java.util.Timer();
-
-     // timer.scheduleAtFixedRate(iniciar(), 0, 1000);
         this.setVisible(Visible_ventana);
     }
 
-    protected void actualizarMovimiento(int posicion_tortuga) {
 
-    }
 
 void terminarCarrera(){
-    timerTa.stop();
-    hilorc.stop();
-    parar_carrera= true;
+
+    btn_inicio.setEnabled(false);
     relohilo.stop();
     cronoshilo.stop();
-    principal_hilo.stop();
 }
 
     void iniciar(){
-      //  jp_numeros.add(rc,BorderLayout.CENTER);
-        hilorc.start();
-        principal_hilo.start();
+
+        rc.initialComponents(inicial_maximo ,inicial_liebre,inicial_tortuga);
+        V_principal=new Thread(this);
+        V_principal.start();
         relohilo.start();
         cronoshilo.start();
+
+        btn_inicio.setEnabled(false);
+        btn_pausar.setEnabled(true);
+
+        btn_terminar.setEnabled(true);
+        reglasActualizacion();
+        this.setVisible(true);
     }
 
     void JSilderComponents() {
@@ -116,36 +104,17 @@ void terminarCarrera(){
     }
     void JTextAreaComponents() {
 
-        informe_carrera_JTextArea = new JTextArea();
-
-        informe_carrera_JTextArea.setLineWrap(true);
-
-        informe_carrera_JTextArea.setEditable(false);
-        informe_carrera_JTextArea.setBounds(10, 5, 100, 100);
-        pane_estudiante = new JScrollPane(informe_JTextArea, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
-
         informe_JTextArea = new JTextArea();
-
         informe_JTextArea.setLineWrap(true);
-
         informe_JTextArea.setEditable(false);
         informe_JTextArea.setBounds(10, 5, 100, 100);
         pane = new JScrollPane(informe_JTextArea, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
     }
-    protected static ImageIcon createImageIcon(String path) {
-        java.net.URL imgURL = VentanaPrincipalLiebreTortuga.class.getResource(path);
-        if (imgURL != null) {
-            return new ImageIcon(imgURL);
-        } else {
-            System.err.println("Couldn't find file: " + path);
-            return null;
-        }
-    }
+
     void components() {
         Font font = new Font("Serif", Font.ITALIC, 15);
         btn_inicio = new JButton("Iniciar");
         btn_inicio.setFont(font);
-
         btn_inicio.addActionListener(this);
         jp_Panel_controles_btns.AddComponentes(btn_inicio);
 
@@ -154,11 +123,13 @@ void terminarCarrera(){
         jp_Panel_controles_btns.AddComponentes(btn_pausar);
         btn_pausar.setEnabled(false);
         btn_pausar.setFont(font);
+
         btn_reanudar = new JButton("Reanudar");
         btn_reanudar.addActionListener(this);
         jp_Panel_controles_btns.AddComponentes(btn_reanudar);
         btn_reanudar.setEnabled(false);
         btn_reanudar.setFont(font);
+
         btn_terminar = new JButton("Terminar");
         btn_terminar.addActionListener(this);
         jp_Panel_controles_btns.AddComponentes(btn_terminar);
@@ -173,13 +144,9 @@ void terminarCarrera(){
 
         jp_Panel_controles.addJPanel(jp_Panel_controles_silder, BorderLayout.EAST);
         jp_Panel_controles.addJPanel(jp_Panel_controles_btns, BorderLayout.WEST);
-
-
-
     }
 
 void JLabelComponents(){
-
     Border bt_horas_actual;
     bt_horas_actual = BorderFactory.createLineBorder(green, 1);
     bt_horas_actual = BorderFactory.createTitledBorder(bt_horas_actual,"Hora");
@@ -196,22 +163,16 @@ void JLabelComponents(){
     cronoshilo=new Thread(cronos);
 }
 
-    JLabel Calificacion;
 
     public void PanelBorderLAyout() {
-        Calificacion = new JLabel("00:00:00");
-        //jp_principal.addJComponents(Calificacion);
+        chronos = new JLabel("00:00:00");
         jp_principal.addJPanel(jp_Panel_controles.componente(), BorderLayout.PAGE_END);
         jp_principal.addJPanel(jp_numeros, BorderLayout.CENTER);
         jp_principal.addJPanel(jp_Informe, BorderLayout.PAGE_START);
-     //   jp_numeros.AddComponentes(picture);
         jp_principal.addJPanel(pane, BorderLayout.EAST);
-       // jp_numeros.AddComponentes(pane);
         jp_Informe.AddComponentes(cronos);
         jp_Informe.AddComponentes(fech);
-       // jp_Informe.AddComponentes(pane);
         jp_principal.add(rc,BorderLayout.CENTER);
-        //jp_numeros.AddComponentes(capacidad_anillo);
         this.add(jp_principal);
     }
 
@@ -219,26 +180,22 @@ void JLabelComponents(){
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == btn_inicio) {
             iniciar();
-            btn_inicio.setEnabled(false);
-            btn_pausar.setEnabled(true);
 
-            btn_terminar.setEnabled(true);
-            this.setVisible(true);
         }else if (e.getSource() == btn_pausar) {
             btn_pausar.setEnabled(false);
             btn_reanudar.setEnabled(true);
             btn_terminar.setEnabled(true);
-            hilorc.suspend();
-            relohilo.suspend();
-            cronoshilo.suspend();
+          //  hilorc.suspend();
+            relohilo.checkAccess();
+            cronoshilo.checkAccess();
         }else if (e.getSource() == btn_reanudar) {
 
             btn_pausar.setEnabled(true);
             btn_reanudar.setEnabled(false);
             btn_terminar.setEnabled(true);
-            hilorc.resume();
-            relohilo.resume();
-            cronoshilo.resume();
+       //     hilorc.resume();
+            relohilo.checkAccess();
+            cronoshilo.checkAccess();
         }else if (e.getSource() == btn_terminar) {
             btn_pausar.setEnabled(false);
             btn_reanudar.setEnabled(false);
@@ -289,17 +246,11 @@ void JLabelComponents(){
     @Override
     public void stateChanged(ChangeEvent e) {
         if (e.getSource() == silder1) {
-
             silder1 = (JSlider)e.getSource();
-
             int fps = (int)silder1.getValue();
             setVelocidad_ejecucion(fps);
             rc.setVelocidad(fps);
-
         }
-
-
-
     }
 
     public int getVelocidad_ejecucion() {
@@ -310,44 +261,35 @@ void JLabelComponents(){
         this.velocidad_ejecucion = velocidad_ejecucion;
     }
 
-    public int getVelocidad_ejecucion1() {
-        return velocidad_ejecucion1;
-    }
 
-    public void setVelocidad_ejecucion1(int velocidad_ejecucion1) {
-        this.velocidad_ejecucion1 = velocidad_ejecucion1;
+    public  void reglasActualizacion() {
+
     }
 
     @Override
-    public  void run() {
-        System.out.println("arranco hilo principal");
-        while (bandera_llegada) {
+    public void run() {
+        while ( rc.bandera_llegada) {
+            if ( rc.getX_tortuga()== rc.getX_liebre()) {
 
 
-            rc.listar();
-            this.setVisible(true);
-            System.out.println("Actualizando hilo principal thor"+rc.getX_tortuga()+" Libre "+rc.getX_liebre());    if ( rc.getX_tortuga()== rc.getX_liebre()) {
-                bandera_llegada=false;
-       terminarCarrera();
-       rc.listar();
-       this.setVisible(true);
-            }else{
-
+                rc.bandera_llegada=rc.isBandera_llegada();
+                terminarCarrera();
                 informe_JTextArea.setText(informe_JTextArea.getText() + "\n" +
                         "Posiciòn Tortuga" +
                         rc.getX_tortuga() + "\n Posiciòn Liebre" +
                         rc.getX_liebre()
                 );
-                rc.listar();
-this.setVisible(true);
-                System.out.println("actualizando listalabel");
-            } rc.listar();
-            this.setVisible(true);
-
-
+                V_principal.stop();
+                cronoshilo.stop();
+                relohilo.stop();
+            }else{
+                informe_JTextArea.setText(informe_JTextArea.getText() + "\n" +
+                        "Posiciòn Tortuga" +
+                        rc.getX_tortuga() + "\n Posiciòn Liebre" +
+                        rc.getX_liebre()
+                );
+            }
 
         }
-        System.out.println("termina hilo principal thor"+rc.getX_tortuga()+" Libre "+rc.getX_liebre());
     }
-
 }

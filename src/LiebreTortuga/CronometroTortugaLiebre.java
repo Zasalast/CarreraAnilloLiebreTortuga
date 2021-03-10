@@ -15,7 +15,7 @@ public class CronometroTortugaLiebre extends JLabel implements Runnable{
     @Override
     public synchronized void run() {
         try {
-            while(bandera_llegada){
+            while(isBandera_llegada()){
                 this.setText(Tiempo());
                 System.out.println("hilo   cron ");
 

@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/CorrerLiebreTortuga.iml" filepath="$PROJECT_DIR$/CorrerLiebreTortuga.iml" />
+      <module fileurl="file://$PROJECT_DIR$/LiebreTortuga.iml" filepath="$PROJECT_DIR$/LiebreTortuga.iml" />
     </modules>
   </component>
 </project>
