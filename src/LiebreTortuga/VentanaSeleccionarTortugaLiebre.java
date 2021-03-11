@@ -7,9 +7,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.ParseException;
-import java.util.TimerTask;
 
-import static java.awt.Color.RED;
 import static java.awt.Color.green;
 
 public class VentanaSeleccionarTortugaLiebre extends JFrame implements ActionListener {
@@ -111,30 +109,47 @@ public class VentanaSeleccionarTortugaLiebre extends JFrame implements ActionLis
             }
         } else if (e.getSource() == btn_inicio_definida) {
 
-
             try {
-                revisarRango();
+                boolean bandera_ok=revisarRango(capacidadAnilloInt()-2,posicionLiebreInt(),posicionTortugaInt());
+                System.out.println("inicio definido:"+bandera_ok+"" +
+                        "\ncapacidad anillo: " +(capacidadAnilloInt()-2)+
+                        " \n  posicionLiebre:" +posicionLiebreInt()+
+                        "\n posicionTortuga: " +posicionTortugaInt());
+                if (bandera_ok){
+                    iniciar_carrera();
+                }
             } catch (ParseException parseException) {
                 parseException.printStackTrace();
             }
+
+
         }
         else if (e.getSource() == btn_inicio_aleatorio) {
-            generarRangoAleatorio(20);
-
-            incioSinControl();
+            try {
+                incioSinControl(50,20,10);
+            } catch (ParseException parseException) {
+                parseException.printStackTrace();
+            }
         }else      if (e.getSource() == btn_salair) {
             System.exit(1);
         }
     }
 
 void iniciar_carrera()  {
+                      VentanaPrincipalLiebreTortuga v1 = new VentanaPrincipalLiebreTortuga("Carrera Liebre vs Tortuga Seleccionar Etapas", 900, 650, false, true,capacidadAnilloInt()-2,posicionLiebreInt(),posicionTortugaInt());
+                this.setVisible(false);}
 
-              VentanaPrincipalLiebreTortuga v1 = new VentanaPrincipalLiebreTortuga("Carrera Liebre vs Tortuga Seleccionar Etapas", 900, 650, false, true,Integer.parseInt(capacidad_anillo.getText()),Integer.parseInt(posicion_liebre.getText()),Integer.parseInt(posicion_tortuga.getText()));
-                this.setVisible(false);
-
-}
-
-void incioSinControl(){
+void incioSinControl(int x,int y,int z ) throws ParseException {
+    inicial_maximo= 1;
+    inicial_tortuga= 1;
+    inicial_liebre= 1;
+    System.out.println("entro incioSinControl");
+        while (revisarRango(inicial_maximo,inicial_liebre,inicial_tortuga)) {
+            inicial_maximo= g_aleatorio.GenerarEntero(x,"inicial maximo");
+            inicial_liebre= g_aleatorio.GenerarEntero(y,"inicial liebre");
+            inicial_tortuga = g_aleatorio.GenerarEntero(z,"inicial tortuga");
+        }
+    System.out.println("salio del ciclo incioSinControl");
     VentanaPrincipalLiebreTortuga v1 = new VentanaPrincipalLiebreTortuga("Carrera Liebre vs Tortuga Seleccionar Etapas", 900, 650, false, true,inicial_maximo,inicial_liebre,inicial_tortuga);
     this.setVisible(false);
 }
@@ -160,31 +175,27 @@ void habilitarBotones() throws ParseException {
     // jp_numeros.setSize(this.getWidth(),(this.getHeight()-80));
     this.setVisible(true);
 }
-private  void generarRangoAleatorio(int x){
-    inicial_maximo= g_aleatorio.GenerarEntero(x);
-    inicial_tortuga= g_aleatorio.GenerarEntero(x/2);
-    inicial_liebre= g_aleatorio.GenerarEntero(x);
-    while((inicial_maximo >=  inicial_liebre) ){
-                while( (inicial_liebre >  inicial_tortuga)){
-                    if (inicial_liebre <=  inicial_tortuga) {
-                        inicial_tortuga = g_aleatorio.GenerarEntero(4);
-                        inicial_liebre= g_aleatorio.GenerarEntero(x);
-                    }
-                }if((inicial_liebre >  inicial_tortuga)){
-            inicial_maximo= g_aleatorio.GenerarEntero(x);
-        }
 
-            }
-}
-      void revisarRango() throws ParseException {
-        if(Integer.parseInt(capacidad_anillo.getText())<=20){
+    int capacidadAnilloInt(){
+        return Integer.parseInt(capacidad_anillo.getText());
+    }
+    int posicionLiebreInt(){
+        return Integer.parseInt(posicion_liebre.getText());
+    }
+    int posicionTortugaInt(){
+        return Integer.parseInt(capacidad_anillo.getText());
+    }
+      boolean revisarRango(int x,int y,int z) throws ParseException {
+          boolean OK=true;
+        if(x<=84){
             bt_capacidad_anillo = BorderFactory.createLineBorder(Color.GREEN, 1);
-            if(Integer.parseInt(posicion_liebre .getText())<=Integer.parseInt(capacidad_anillo.getText())) {
+            if(y<=x) {
                 bt_posicion_liebre = BorderFactory.createLineBorder(Color.GREEN, 1);
 
-                if(Integer.parseInt(posicion_tortuga .getText())<Integer.parseInt(posicion_liebre.getText())) {
+                if(z<y) {
                     bt_posicion_tortuga = BorderFactory.createLineBorder(Color.GREEN, 1);
-                    iniciar_carrera();
+                   OK=false;
+                    return OK;
                 }else{
                     bt_posicion_tortuga = BorderFactory.createLineBorder(Color.RED, 1);
                 }
@@ -193,5 +204,6 @@ private  void generarRangoAleatorio(int x){
             }
         }else{
           bt_capacidad_anillo = BorderFactory.createLineBorder(Color.RED, 1);}
+        return OK;
     }
 }

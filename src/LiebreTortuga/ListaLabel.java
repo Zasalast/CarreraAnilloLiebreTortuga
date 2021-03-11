@@ -10,7 +10,7 @@ public  class ListaLabel extends JPanel implements  Runnable {
     private Nodo inicio;
     private Nodo ultimo;
     private int x_liebre,x_tortuga;//una bandera de ubicacion de liebre y turtuga
-   private String url_liebre="Liebre",url_tortuga="Tortuga";
+   private String url_liebre="Liebre",url_tortuga="Tortuga",url_piedra="Piedra",url_final="Final";
     private int tamanio;
     private int velocidad=100;
     boolean bandera_llegada = true;
@@ -205,35 +205,13 @@ public  class ListaLabel extends JPanel implements  Runnable {
             do{
                 aux = aux.getSiguiente();
                 add(aux);
-                repaint();
-                this.setVisible(true);
+               this.setVisible(true);
                 i++;
             }while(aux != inicio);
         }
     }
-    Graphics g;
-    public void paint(Graphics g) {
-        g.drawImage(fondo.getImage(),0, 0,    this.getWidth(), this.getHeight(), this);
-        super.paint(g);
-        listar(g);
-               g.fillOval(5*getX_liebre(),5*getX_tortuga(),20,20);
-    }
 
-    private void listar(Graphics g) {
-        if (!esVacia()) {
-            Nodo aux = inicio;
-            ImageIcon    fondo1=new ImageIcon(getClass().getResource("/images/liebretortuga/"+aux.getUrl_imagen2()+".png"));
 
-            int i = 0;
-            do{
-                aux = aux.getSiguiente();
-            //    fondo=aux
-                g.drawImage(fondo.getImage(), aux.getWidth(),aux.getHeight(),100,100, this);
-                repaint();
-                i++;
-            }while(aux != inicio);
-        }
-    }
     public void ActualizarImagen(){
         if (!esVacia()) {
             Nodo aux = inicio;
@@ -256,21 +234,23 @@ public  class ListaLabel extends JPanel implements  Runnable {
             setX_tortuga(getX_tortuga()+1);
             ActualizarImagen(); this.setVisible(true);
             repaint();
+        }else{
+            setX_tortuga(getX_tortuga()+1);
+            editarPorPosicion(getX_tortuga(),url_tortuga,url_tortuga);
+            editarPorPosicion(getX_tortuga()-1,url_piedra,url_piedra);
+            ActualizarImagen();repaint();
         }
          if (getX_liebre()>=getTamanio()){
              setX_liebre(0);
              setX_liebre(getX_liebre()+2);
              ActualizarImagen(); repaint();
              this.setVisible(true);
+         }else{
+             setX_liebre(getX_liebre()+2);
+             editarPorPosicion(getX_liebre()-2,url_piedra,url_piedra);
+             editarPorPosicion(getX_liebre(),url_liebre,url_liebre);
          }
 
-        setX_tortuga(getX_tortuga()+1);
-        setX_liebre(getX_liebre()+2);
-        editarPorPosicion(getX_liebre()-2,"Piedra","Piedra");
-        editarPorPosicion(getX_liebre(),url_liebre,"Liebre");
-        editarPorPosicion(getX_tortuga(),url_tortuga,"Tortuga");
-        editarPorPosicion(getX_tortuga()-1,"Piedra","Piedra");
-        ActualizarImagen();repaint();
          System.out.println(" Tortuga: "+getX_tortuga());
          System.out.println(" Liebre: "+getX_liebre());
 
@@ -287,9 +267,9 @@ public  class ListaLabel extends JPanel implements  Runnable {
                     e.printStackTrace();
                 }  this.repaint();
 
-                actualizarNodos();
                 listar(); setVisible(true);
                 this.repaint();
+                editarPorPosicion(getX_liebre(),url_final,url_final);
                 setBandera_llegada(false);
             }else{
                 try {
@@ -318,10 +298,10 @@ public  class ListaLabel extends JPanel implements  Runnable {
         setX_liebre(posicion_liebre);
         setX_tortuga(posicion_tortuga);
         for (int i = 0; i <inicial_maximo ; i++) {
-            addInicio("Piedra","Piedra");
+            addInicio(url_piedra,url_piedra);
         }
-        addUbicacion(posicion_liebre,url_liebre,"Liebre");
-        addUbicacion(posicion_tortuga,url_tortuga,"Tortuga");
+        addUbicacion(posicion_liebre,url_liebre,url_liebre);
+        addUbicacion(posicion_tortuga,url_tortuga,url_tortuga);
         listar();
         hilorc.start();
     }
