@@ -58,7 +58,10 @@ public class Nodo extends JLabel {
     }
 
     public void setUrl_imagen2(String url_imagen2) {
+
         this.url_imagen2 = url_imagen2;
+        this.setIcon( Esc_imagen_label.PonerLaImagen("/images/liebretortuga/"+url_imagen2+".png",this));
+
     }
 
     public JLabel getJlabel() {
