@@ -201,6 +201,7 @@ public  class ListaLabel extends JPanel implements  Runnable {
     public void listar(){
         if (!esVacia()) {
             Nodo aux = inicio;
+            add(aux);
             int i = 0;
             do{
                 aux = aux.getSiguiente();
@@ -300,8 +301,10 @@ public  class ListaLabel extends JPanel implements  Runnable {
         for (int i = 0; i <inicial_maximo ; i++) {
             addInicio(url_piedra,url_piedra);
         }
-        addUbicacion(posicion_liebre,url_liebre,url_liebre);
-        addUbicacion(posicion_tortuga,url_tortuga,url_tortuga);
+
+
+        editarPorPosicion(posicion_liebre,url_liebre,url_liebre);
+        editarPorPosicion(posicion_tortuga,url_tortuga,url_tortuga);
         listar();
         hilorc.start();
     }

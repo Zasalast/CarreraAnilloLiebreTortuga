@@ -275,8 +275,8 @@ void JLabelComponents(){
                 rc.bandera_llegada=rc.isBandera_llegada();
                 terminarCarrera();
                 informe_JTextArea.setText(informe_JTextArea.getText() + "\n" +
-                        "Posiciòn Tortuga" +
-                        rc.getX_tortuga() + "\n Posiciòn Liebre" +
+                        "Posiciòn Tortuga: \n" +
+                        rc.getX_tortuga() + "\n Posiciòn Liebre: \n" +
                         rc.getX_liebre()
                 );
                 V_principal.stop();
@@ -284,9 +284,9 @@ void JLabelComponents(){
                 relohilo.stop();
             }else{
                 informe_JTextArea.setText(informe_JTextArea.getText() + "\n" +
-                        "Posiciòn Tortuga" +
-                        rc.getX_tortuga() + "\n Posiciòn Liebre" +
-                        rc.getX_liebre()
+                        "Posiciòn Tortuga: \n" +
+                        rc.getX_tortuga() + "\n Posiciòn Liebre: \n" +
+                        rc.getX_liebre()+"\n"
                 );
             }
 

@@ -110,12 +110,12 @@ public class VentanaSeleccionarTortugaLiebre extends JFrame implements ActionLis
         } else if (e.getSource() == btn_inicio_definida) {
 
             try {
-                boolean bandera_ok=revisarRango(capacidadAnilloInt()-2,posicionLiebreInt(),posicionTortugaInt());
+                boolean bandera_ok=revisarRango(capacidadAnilloInt(),posicionLiebreInt(),posicionTortugaInt());
                 System.out.println("inicio definido:"+bandera_ok+"" +
-                        "\ncapacidad anillo: " +(capacidadAnilloInt()-2)+
+                        "\ncapacidad anillo: " +(capacidadAnilloInt())+
                         " \n  posicionLiebre:" +posicionLiebreInt()+
                         "\n posicionTortuga: " +posicionTortugaInt());
-                if (bandera_ok){
+                if (!bandera_ok){
                     iniciar_carrera();
                 }
             } catch (ParseException parseException) {
@@ -136,7 +136,7 @@ public class VentanaSeleccionarTortugaLiebre extends JFrame implements ActionLis
     }
 
 void iniciar_carrera()  {
-                      VentanaPrincipalLiebreTortuga v1 = new VentanaPrincipalLiebreTortuga("Carrera Liebre vs Tortuga Seleccionar Etapas", 900, 650, false, true,capacidadAnilloInt()-2,posicionLiebreInt(),posicionTortugaInt());
+                      VentanaPrincipalLiebreTortuga v1 = new VentanaPrincipalLiebreTortuga("Carrera Liebre vs Tortuga Seleccionar Etapas", 900, 650, false, true,capacidadAnilloInt(),posicionLiebreInt(),posicionTortugaInt());
                 this.setVisible(false);}
 
 void incioSinControl(int x,int y,int z ) throws ParseException {
@@ -183,7 +183,7 @@ void habilitarBotones() throws ParseException {
         return Integer.parseInt(posicion_liebre.getText());
     }
     int posicionTortugaInt(){
-        return Integer.parseInt(capacidad_anillo.getText());
+        return Integer.parseInt(posicion_tortuga.getText());
     }
       boolean revisarRango(int x,int y,int z) throws ParseException {
           boolean OK=true;
